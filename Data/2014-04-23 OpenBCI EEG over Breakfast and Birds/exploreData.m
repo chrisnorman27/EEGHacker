@@ -2,7 +2,7 @@
 %given_amp_counts = 4.5/2.4e-3;
 
 
-pname = 'SavedData\';
+pname = 'SavedData/';
 fname = 'openBCI_raw_2014-04-05_16-25-11_countBackAfterLastAlpha_filt.txt';nchan=1;
 %fname = 'openBCI_raw_2014-04-05_16-31-37_ECGelec_impedanceChecks_filt.txt';nchan=2;
 %fname = 'openBCI_raw_2014-04-05_16-36-34_ECGelec_countBackBy3_noFilt.txt';nchan=2;
@@ -40,9 +40,10 @@ data_V = filter(b,a,data_V);
 %% write to WAV
 fs_dec = fs;foo_V = data_V;
 %foo_V = resample(data_V,1,2); fs_dec = fs / 2;  %decimate
-outfname = ['WAVs\' fname(1:end-4) '.wav'];
+outfname = ['WAVs/' fname(1:end-4) '.wav'];
 disp(['writing to ' outfname]);
-wavwrite(foo_V(:,1:min([size(data_V,2) 2]))*1e6/500,fs_dec,16,outfname);
+%wavwrite(foo_V(:,1:min([size(data_V,2) 2]))*1e6/500,fs_dec,16,outfname);
+audiowrite(outfname,foo_V(:,1:min([size(data_V,2) 2]))*1e6/500,fs_dec);
 
 
 %% analyze data
@@ -56,11 +57,11 @@ spread_data_V = median(spread_data_V)*ones(size(spread_data_V));
 t_sec = ([1:size(data_V,1)]-1)/fs;
 nrow = max([2 size(data_V,2)]); ncol=2;
 ax=[];
-figure;setFigureTallestWidest;
+figure;%setFigureTallestWidest;
 for Ichan=1:size(data_V,2);
 
     %time-domain plot
-    subplotTightBorder(nrow,ncol,(Ichan-1)*2+1);
+    subplot(nrow,ncol,(Ichan-1)*2+1);
     plot(t_sec,data_V(:,Ichan)*1e6);
     xlim(t_sec([1 end]));
     %ylim(1e6*(median_data_V(Ichan)+3*[-1 1]*spread_data_V(Ichan)));
@@ -73,7 +74,7 @@ for Ichan=1:size(data_V,2);
     ax(end+1)=gca;
 
     %spectrogram
-    subplotTightBorder(nrow,ncol,(Ichan-1)*2+2);
+    subplot(nrow,ncol,(Ichan-1)*2+2);
     %N=1024;
     %N=1200;overlap = 1-1/32;plots=0;
     %N = 2400;overlap = 1-1/64;plots=0; yl=[0 15];
